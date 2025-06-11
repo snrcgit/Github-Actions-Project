@@ -6,17 +6,16 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI with Maven
+name: maven-httpd
 
 on:
   push:
     branches: [ "main" ]
 
-
 jobs:
-  build:
-
+  compile:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -26,16 +25,15 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
- # install http  
-      runs-on: self-hosted
-      uses: actions/checkout@v4
- 
-       steps:
-       - uses: actions/checkout@v4
-       - name: http Installation
-         run: |
-           sudo apt-get install -y httpd
-        
-     
-  
+      run: mvn compile
+      
+  security-check:
+    runs-on: self-hosted
+    needs: compile
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: httpd Installation
+      run: |
+        sudo apt-get install -y httpd
+       
